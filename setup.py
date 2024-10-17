@@ -114,3 +114,50 @@ class HealthItem(pygame.sprite.Sprite):
         self.rect.x -= 3  # Slowly move the health item to the left
         if self.rect.right < 0:
             self.kill()
+ 
+# Create game objects
+all_sprites = pygame.sprite.Group()
+player = Player(50, HEIGHT // 2)  # Player starts on the left
+all_sprites.add(player)
+ 
+enemies = pygame.sprite.Group()
+projectiles = pygame.sprite.Group()
+health_items = pygame.sprite.Group()
+ 
+# Tank speed and health based on score
+def get_tank_speed(score):
+    if score >= 5000:
+        return 6  # Fastest speed
+    elif score >= 4000:
+        return 5  # Faster speed
+    elif score >= 2300:
+        return INITIAL_ENEMY_SPEED * 2  # Double speed
+    elif score >= 2000:
+        return 4  # Fast speed
+    else:
+        return INITIAL_ENEMY_SPEED  # Default speed
+ 
+def get_tank_health(score):
+    if score >= 3000:
+        return 50 * 1.75  # 1.75x health after score 3000
+    elif score >= 1500:
+        return 50 * 1.5  # 1.5x health after score 1500
+    else:
+        return 50  # Normal health
+ 
+def spawn_tank(score):
+    tank_speed = get_tank_speed(score)
+    tank_health = get_tank_health(score)
+    tank = Tank(WIDTH + 50, random.randint(50, HEIGHT - 50), tank_speed, tank_health)  # Tanks spawn off the right side
+    all_sprites.add(tank)
+    enemies.add(tank)
+ 
+def spawn_boss():
+    boss = Boss(WIDTH + 50, HEIGHT // 2)  # Boss spawns at the center
+    all_sprites.add(boss)
+    enemies.add(boss)
+ 
+def spawn_health_item():
+    health_item = HealthItem(WIDTH + 50, random.randint(50, HEIGHT - 50))  # Health item spawns randomly
+    all_sprites.add(health_item)
+    health_items.add(health_item)
